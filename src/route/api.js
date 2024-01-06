@@ -4,5 +4,6 @@ const SaleController = require('../controller/SaleController');
 
 router.post('/sale', SaleController.createSale);
 router.get('/api/sales/total-revenue', SaleController.getTotalSale);
+router.get('/api/sales/total-by-product', SaleController.totalQuantityByProduct);
 
 module.exports = router;
