@@ -50,3 +50,141 @@ exports.totalQuantityByProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
       }
 }
+exports.topProducts = async (req, res) => {
+    try {
+      const topProducts = await SaleModel.aggregate([
+        {
+          $group: {
+            _id: '$product',
+            totalRevenue: { $sum: { $multiply: ['$quantity', '$price'] } }
+          }
+        },
+        {
+          $sort: { totalRevenue: -1 }
+        },
+        {
+          $limit: 5
+        }
+      ]);
+        res.json(topProducts);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+}
+
+exports.averageProductPrice = async (req, res) => {
+    try {
+      const averagePrice = await Sale.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalPrice: { $sum: { $multiply: ['$quantity', '$price'] } },
+            totalQuantity: { $sum: '$quantity' }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            averagePrice: { $divide: ['$totalPrice', '$totalQuantity'] }
+          }
+        }
+      ]);
+  
+      res.json(averagePrice[0]);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+}
+exports.RevenueByMonth = async (req, res) => {
+    try {
+      const revenueByMonth = await Sale.aggregate([
+        {
+          $group: {
+            _id: {
+              year: { $year: '$date' },
+              month: { $month: '$date' }
+            },
+            totalRevenue: { $sum: { $multiply: ['$quantity', '$price'] } }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            year: '$_id.year',
+            month: '$_id.month',
+            totalRevenue: 1
+          }
+        },
+        {
+          $sort: { year: 1, month: 1 }
+        }
+      ]);
+  
+      res.json(revenueByMonth);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+}
+
+exports.HighestQuantitySold = async (req, res) => {
+
+  try {
+    const highestQuantitySold = await Sale.aggregate([
+      {
+        $group: {
+          _id: {
+            date: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
+            product: '$product'
+          },
+          totalQuantity: { $sum: '$quantity' }
+        }
+      },
+      {
+        $sort: { totalQuantity: -1 }
+      },
+      {
+        $limit: 1
+      },
+      {
+        $project: {
+          _id: 0,
+          date: '$_id.date',
+          product: '$_id.product',
+          totalQuantity: 1
+        }
+      }
+    ]);
+
+    res.json(highestQuantitySold[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+  
+}
+
+exports.DepartmentSalaryExpenses = async (req, res) => {
+  
+  try {
+    const departmentSalaryExpense = await Sale.aggregate([
+      {
+        $group: {
+          _id: '$department', 
+          totalSalaryExpense: { $sum: { $multiply: ['$quantity', '$price'] } }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          department: '$_id',
+          totalSalaryExpense: 1
+        }
+      }
+    ]);
+
+    res.json(departmentSalaryExpense);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+
+}
