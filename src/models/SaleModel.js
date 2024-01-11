@@ -17,6 +17,10 @@ const saleSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-});
+},
+{
+  versionKey: false}
+
+);
 
 module.exports = mongoose.model('Sale', saleSchema);

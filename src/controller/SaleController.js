@@ -24,7 +24,7 @@ exports.getTotalSale = async (req, res) => {
           ]);
       
           if (totalRevenue.length > 0) {
-            res.status(200).json({ totalRevenue: totalRevenue[0].total });
+            res.status(200).json({status:"success", data: totalRevenue[0].total });
           } else {
             res.status(200).json({ totalRevenue: 0 });
           }
@@ -45,7 +45,7 @@ exports.totalQuantityByProduct = async (req, res) => {
           },
         ]);
     
-        res.json(quantityByProduct);
+        res.status(200).json({status:"success", data: quantityByProduct });
       } catch (error) {
         res.status(500).json({ message: error.message });
       }
@@ -66,7 +66,7 @@ exports.topProducts = async (req, res) => {
           $limit: 5
         }
       ]);
-        res.json(topProducts);
+        res.status(200).json({status:"success", data: topProducts });
       } catch (error) {
         res.status(500).json({ message: error.message });
       }
@@ -90,7 +90,7 @@ exports.averageProductPrice = async (req, res) => {
         }
       ]);
   
-      res.json(averagePrice[0]);
+      res.status(200).json({status:"success", data: averagePrice[0].averagePrice });
       } catch (error) {
         res.status(500).json({ message: error.message });
       }
@@ -120,7 +120,7 @@ exports.RevenueByMonth = async (req, res) => {
         }
       ]);
   
-      res.json(revenueByMonth);
+      res.status(200).json({status:"success", data: revenueByMonth });
       } catch (error) {
         res.status(500).json({ message: error.message });
       }
@@ -155,7 +155,7 @@ exports.HighestQuantitySold = async (req, res) => {
       }
     ]);
 
-    res.json(highestQuantitySold[0]);
+    res.status(200).json({status:"success", data: highestQuantitySold[0] });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -181,7 +181,7 @@ exports.DepartmentSalaryExpenses = async (req, res) => {
       }
     ]);
 
-    res.json(departmentSalaryExpense);
+    res.status(200).json({status:"success", data: departmentSalaryExpense });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
